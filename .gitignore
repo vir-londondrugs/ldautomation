@@ -1,0 +1,11 @@
+# Local Agent Execution & Reports
+outputs/
+temp/
+
+# CODA Environment & Inspectors
+.coda/
+.mcp-web-inspector/
+.vscode/
+
+# macOS System Files
+.DS_Store
