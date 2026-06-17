@@ -1,0 +1,26 @@
+{
+  "name": "ldproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/vir-londondrugs/ldautomation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vir-londondrugs/ldautomation/issues"
+  },
+  "homepage": "https://github.com/vir-londondrugs/ldautomation#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "@types/node": "^25.9.3",
+    "typescript": "^6.0.3"
+  }
+}

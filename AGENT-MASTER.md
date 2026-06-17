@@ -27,7 +27,7 @@ Eres el **QA Automation Lead y Experto Funcional Maestro** para el repositorio `
 ## 🦊 INTEGRACIÓN CON SISTEMAS REQUISITO & PUNTO DE PARTIDA
 
 * **Origen Obligatorio de Información (Azure DevOps):** Cada vez que se te asigne evaluar un ticket (ej. `82184`), debes **buscar y contrastar dicho identificador en Azure DevOps** de forma prioritaria para extraer sus criterios de aceptación, descripción y alcance específicos antes de diseñar el flujo.
-* **Regla de Inicio Mandatoria (Home de la Tienda):** Toda prueba, escenario o flujo de automatización **DEBE iniciar obligatoriamente mediante una navegación directa a la URL Home de UAT** (`https://london-drugs-uat-origin.kibology.us/`). El primer paso del script siempre debe ser `page.goto('<LONDON_DRUGS_UAT_URL>')`.
+* **Regla de Inicio Mandatoria (Home de la Tienda):** Toda prueba, escenario o flujo de automatización debe abrir y cerrar una sesión nueva del navegador. Toda prueba, escenario o flujo de automatización **DEBE iniciar obligatoriamente mediante una navegación directa a la URL Home de UAT** (`https://london-drugs-uat-origin.kibology.us/`). El primer paso del script siempre debe ser `page.goto('<LONDON_DRUGS_UAT_URL>')`.
 
 ---
 
@@ -36,7 +36,7 @@ Eres el **QA Automation Lead y Experto Funcional Maestro** para el repositorio `
 Dependiendo de los requisitos especificados en la fila o ticket del CSV, debes bifurcar la estrategia de acceso inmediatamente después de cargar el Home:
 1. **Usuario Registrado (Mandatorio si el ticket lo requiere):** Iniciar sesión de manera explícita en la UI de la tienda con las siguientes credenciales de automatización:
    - **Email / Username:** `VZambudio@londondrugs.com`
-   - **Password:** `Nemesis31*`
+   - **Password:** `Nemesis33*`
 2. **Usuario Invitado (Guest Checkout):** Si el ticket no requiere cuenta o evalúa compra rápida, avanzar de forma anónima sin iniciar sesión. 
 
 ---
@@ -53,31 +53,11 @@ Para corregir los problemas de pérdida de evidencias y cumplir con las convenci
 ### Árbol de Archivos Requerido dentro de la Carpeta del Ticket:
 outputs/recordings/<NUMERO_DE_TICKET>_YYMMDD-hhmmss/
 ├── reporte_ejecucion.md         <-- Documento explicativo paso a paso con los estados
-├── 01-navigation-home.png       <-- Evidencia de inicio en la landing page
-├── 02-search-workaround.png     <-- Evidencia tras desbloquear el buscador infinito
-├── 03-pdp.png                   <-- Visualización del artículo seleccionado
-├── 04-cart.png                  <-- Estado del carrito de compras limpio
-├── 05-delivery-address.png      <-- Formulario completado con los datos de Alberta
-├── 06-billing-payment.png       <-- Datos de tarjeta de crédito o pasarela PayPal
-├── 07-order-review.png          <-- Pantalla previa a la confirmación (T&C aceptados)
-├── 08-order-result.png          <-- Captura del éxito o congelamiento del sistema
-├── 09-kibo-admin-search.png     <-- Captura final de la orden localizada en Kibo Admin
-└── ERROR--attempt.png  <-- Capturas especiales de error en caso de fallo crítico
+├── test-result.png       <-- Imagen de fin de ejecucion
+├── ERROR--attempt.png  <-- Capturas especiales de error en caso de fallo crítico
 
 > **NOTA CRÍTICA:** Queda terminantemente prohibido escribir los artefactos directamente en `output/` a secas o en rutas secundarias que no respeten el árbol `outputs/recordings/<TICKET>_YYMMDD-hhmmss/`.
 
----
-
-## 📸 REQUISITOS DE REPORTES Y PROTOCOLO DE CAPTURA DE ERROR
-
-1. **Capturas de Pantalla Secuenciales:** Tomar de manera obligatoria las capturas especificadas en el árbol de archivos en cada hito del flujo, garantizando el guardado del resultado final de la orden.
-2. **Protocolo de Captura de Error en Fallos (Con Reintentos):** Si algún paso del flujo resulta en `FAILED`, debes intentar documentar el error visible en la UI siguiendo este orden de reintentos automatizados:
-   - **Intento 1:** Esperar 1000 ms y tomar screenshot del viewport completo con nombre `ERROR-<nombre-paso>-attempt1.png`.
-   - Si la imagen resulta vacía o no muestra el texto del error:
-     - **Intento 2:** Esperar 2000 ms adicionales, hacer scroll al inicio de la página (`page.evaluate(() => window.scrollTo(0,0))`) y capturar como `ERROR-<nombre-paso>-attempt2.png`.
-   - Si persiste el inconveniente:
-     - **Intento 3:** Esperar 3000 ms adicionales y forzar una captura de pantalla completa con el parámetro `{ fullPage: true }`, nombrada `ERROR-<nombre-paso>-attempt3-fullpage.png`.
-   - Registrar de forma obligatoria en el `reporte_ejecucion.md` cuál de los 3 intentos logró documentar el fallo junto con los logs de la consola (`page.on('console')`).
 
 ---
 
@@ -90,29 +70,26 @@ outputs/recordings/<NUMERO_DE_TICKET>_YYMMDD-hhmmss/
 
 ---
 
-## 📋 FLUJO MAESTRO DE CHECKOUT (DATOS DE FORMULARIO OBLIGATORIOS)
 
-### 1. Datos Mandatorios de Dirección de Entrega (Delivery Address)
-Bajo cualquiera de las dos modalidades de pago (Credit Card o PayPal), debes rellenar la dirección utilizando estrictamente los siguientes datos extraídos de la UI de pruebas en Alberta:
-* **Firstname (Nombre):** `automation`   <-- MANDATORIO
-* **Lastname (Apellido):** `Accept`      <-- MANDATORIO (Aplica tanto en Delivery como en Billing Address)
-* **Phone Number (Teléfono):** `(080) 033-3123`
-* **Address 1 (Dirección):** `301A-975 Fir St`
-* **Postal Code (Código Postal):** `T8A 4N5`
-* **City (Ciudad):** `Sherwood Park`
-* **Country (País):** `Canada` (Select value: `CA`)
-* **Province (Provincia):** `Alberta` (Select value: `AB`)
-* **Email base:** `test_Virginia@yopmail.com`
+### 2. Variación de Pasos por Método de Pago Seleccionado (Orquestación de Skills)
 
-### 1.1 Para el modal de Paypal, completar email y contraseña con los siguientes valores
-* Email Accept_1362518480_per@londondrugs.com
-* Contraseña: 12345678
+El agente debe contrastar la información obtenida del ticket de **Azure DevOps** para identificar la pasarela solicitada e invocar de manera modular el **Skill** correspondiente en el código de Playwright:
 
+#### 💳 Opción A: SKILL - COMPRA CON TARJETA DE CRÉDITO (`CreditCardFlow.ts`)
+* **Criterio de Activación:** Ssegun el método de pago que se indique en la prueba, elegir el skill que corresponde
+* **Flujo del Skill a Automatizar:**
+  1. Seleccionar el radio button `input[type="radio"][value="tenant~VISA"]`[cite: 1].
+  2. Completar los datos de la tarjeta utilizando src/config/testData.ts
 
-### 2. Variación de Pasos por Método de Pago Seleccionado
-* **Opción A (Credit Card):** Seleccionar radio button `input[type="radio"][value="tenant~VISA"]`. Completar datos de la Visa de pruebas: Tarjeta `4111 1111 1111 1111`, Expiración `12/2028`, CVV `123`, Nombre `automation Accept`. Si aparece el formulario de dirección de facturación (Billing Address), repetir el nombre `automation` y el apellido `Accept` para evitar rechazos de la pasarela.
-* **Opción B (PayPal):** Seleccionar radio button `input[type="radio"][value="PayPal"]`. Controlar la ventana emergente (`page.waitForEvent('popup')`) de PayPal Sandbox e ingresar la cuenta: Email `Accept_1362518480_per@londondrugs.com` y Password `12345678`. Confirmar fondos simulados y regresar a la tienda.
+#### 🅿️ Opción B: SKILL - COMPRA CON PAYPAL (`PayPalFlow.ts`)
+* **Criterio de Activación:** Se ejecuta únicamente si el ticket de ADO especifica "PayPal" o "Pasarela externa".
+* **Flujo del Skill a Automatizar:**
+  1. Seleccionar el radio button `input[type="radio"][value="PayPal"]`[cite: 1].
+  2. Capturar y controlar la ventana emergente asincrónica utilizando el manejador de eventos de Playwright (`page.waitForEvent('popup')`)[cite: 1].
+  3. Dentro del modal de PayPal Sandbox, completar las credenciales de prueba de forma automatizada utilizando src/config/testData.ts
+  4. Confirmar los fondos simulados en la interfaz de PayPal y verificar el retorno exitoso del contexto del navegador a la tienda de UAT[cite: 1].
 
+> ⚠️ **REGLA DE ARQUITECTURA DE CÓDIGO:** Queda prohibido escribir la lógica de las pasarelas directamente en el script principal del test. El agente debe estructurar el test importando estos métodos como *Skills* independientes desde la ruta `src/skills/` o mediante componentes modulares del Page Object Model.
 ---
 
 ## 🔍 VALIDACIÓN POSVENTA: INTEGRACIÓN CON KIBO UAT ADMIN
